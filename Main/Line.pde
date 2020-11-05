@@ -6,7 +6,7 @@ public class Line {
   float r;
   
   public Line(float nr) {
-    r = nr;
+    r = nr*ConstantData.gui_size_multiplyer;
     points = new ArrayList<PVector>();
     reset();
   }
@@ -45,18 +45,12 @@ public class Line {
     points.remove(points.size()-1);
   }
   
-  public void show() {
-    noStroke();
-//    for(PVector pnt : points) {
-//      fill(clr);
-//      ellipse(pnt.x,pnt.y,r+20,r+20);
-//    }
-    
+  public void show() {    
     if(points.size() < 2) {
       return;
     }
    
-    strokeWeight(40);
+    strokeWeight(r);
     for(int i=1; i<points.size(); i++) {
       PVector pnt = points.get(i);
       PVector prev_pnt = points.get(i-1);

@@ -6,16 +6,19 @@ DrawerGUI resetgui;
 boolean darkmode;
 
 void setup() {
-  fullScreen();
+  //fullScreen();
+  size(720, 1280);
   orientation(PORTRAIT);
   background(0);
   
   PImage theme_gui_icon = loadImage("ThemeGUIIcon.png");
   PImage reset_gui_icon = loadImage("ResetGUIIcon.png");
   
+  ConstantData.initialize(width, height);
+  
   s = new Saver(false);
   b = new Board(s);
-  l = new Line(b.r);
+  l = new Line(40);
   themegui = new DrawerGUI(
     new PVector(100, 150),
     new PVector(1,0),
@@ -34,7 +37,7 @@ void setup() {
     darkmode = false;
   }
   
-  textSize(50);
+  textSize(50*ConstantData.gui_size_multiplyer);
   textAlign(RIGHT, CENTER);
   rectMode(CENTER);
   imageMode(CENTER);
@@ -96,6 +99,8 @@ void mousePressed() {
     } else if(option == 3) {
       darkmode = !darkmode;
       applyDarkmode();
+    } else {
+      themegui.close();
     }
   }
   
@@ -107,6 +112,8 @@ void mousePressed() {
       tmp.theme = b.theme;
       Board nb = new Board(tmp);
       b = nb;
+      b.darkmode = darkmode; // refresh the Borads memory that it still is in darkmode (or not)
+      b.setTheme(b.theme);
       resetgui.close();
     } else {
       resetgui.close();

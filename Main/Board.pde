@@ -15,20 +15,26 @@ public class Board {
   float r;
   float s;
   PVector o;
+  float score_r;
   
   ArrayList<Tile> animated_tiles;
   
   boolean darkmode;
   
   public Board(Saver saver) {
-    wdh = 10;
-    hgt = 10;
+    r = 60*ConstantData.gui_size_multiplyer;
+    s = 90*ConstantData.gui_size_multiplyer;
     
-    r = 60;
-    s = 90;
+    score_r = 30*ConstantData.gui_size_multiplyer;
+    
+    int field_size = width%int(s);
+    wdh = 10;//min(10,field_size);
+    hgt = wdh;
+    
     o = new PVector(
       (width-((wdh-1)*s))/2.0,
       (height-((hgt-1)*s))/2.0);
+    
     
     theme = saver.theme;
     themes = new int[][]{
@@ -43,6 +49,7 @@ public class Board {
       {#ffe66d, #4ecdc4, #eef4ed ,#ff6b7b},
       {255},
     };
+    
     clrs = themes[theme];
     scores = saver.scores;
     scores_goal = new int[scores.length];
@@ -94,7 +101,7 @@ public class Board {
         spos.x-25,
         spos.y);
       fill(clrs[i]);
-      ellipse(spos.x,spos.y,30,30);
+      ellipse(spos.x,spos.y,score_r,score_r);
     }
     
     if(animated_tiles.size() > 0) {
@@ -150,12 +157,13 @@ public class Board {
   }
   
   public PVector getScoresLocation(int index) {
-    int len = scores.length;
     float xi = width/2.0
-        -((len-1)/2.0)*200
-        +index*200;
-    float y = height-250;
-    return new PVector(xi,y);
+        -((scores.length-1)/2.0)*200*ConstantData.gui_size_multiplyer
+        +index*200*ConstantData.gui_size_multiplyer;
+    float y = height-250*ConstantData.gui_size_multiplyer;
+    return new PVector(
+      xi,
+      y);
   }
   
   PVector getCoordsAtMouse() {

@@ -19,9 +19,9 @@ public class DrawerGUI {
     pos = npos;
     dim = ndim;
     options = nclrs.length;
-    padding = 40;
+    padding = 40*ConstantData.gui_size_multiplyer;
     t = 0;
-    r = 120;
+    r = 120*ConstantData.gui_size_multiplyer;
     dir = false;
     active = false;
     r_opt = r-padding;

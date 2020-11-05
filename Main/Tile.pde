@@ -16,9 +16,9 @@ public class Tile {
     start = nstart;
     pos = start;
     end = nend;
-    r_start = 60;
+    r_start = 60*ConstantData.gui_size_multiplyer;
     r = r_start;
-    r_end = 60;
+    r_end = 60*ConstantData.gui_size_multiplyer;
     clr_id = nclr_id;
     done = false;
     selected = false;
@@ -32,17 +32,17 @@ public class Tile {
     end = nend;
     clr_id = nclr_id;
     done = false;
-    r_start = nr_start;
-    r_end = nr_end;
+    r_start = nr_start*ConstantData.gui_size_multiplyer;
+    r_end = nr_end*ConstantData.gui_size_multiplyer;
     selected = false;
   }
   
   public Tile(PVector nstart, int nclr_id) {
     start = nstart;
     pos = start;
-    r_start = 60;
+    r_start = 60*ConstantData.gui_size_multiplyer;
     r = r_start;
-    r_end = 60;
+    r_end = 60*ConstantData.gui_size_multiplyer;
     clr_id = nclr_id;
     done = false;
     if(random(0,1)>0.99) {
@@ -53,12 +53,12 @@ public class Tile {
   
   public float formula(float x) {
     return -0.5*exp(-6*x)*(-2*exp(6*x)+sin(8*x)+2*cos(8*x));
-    //(-pow(cos(x*TWO_PI),0.2)+1)/2.0f;
   }
   
   public void show(int[] clrs) {
+    float margin = 20*ConstantData.gui_size_multiplyer;
     if(selected) {
-      r += 20;
+      r += margin;
     }
     if(special) {
       if(selected) {
@@ -68,14 +68,14 @@ public class Tile {
       }
       stroke(clrs[clr_id]);
       strokeWeight(20);
-      rect(pos.x,pos.y,r-20,r-20, 10);
+      rect(pos.x,pos.y,r-margin,r-margin, 10);
     } else {
       noStroke();
       fill(clrs[clr_id]);
       ellipse(pos.x,pos.y,r,r);
     }
     if(selected) {
-      r -= 20;
+      r -= margin;
     }
   }
   
