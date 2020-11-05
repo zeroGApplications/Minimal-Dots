@@ -6,8 +6,7 @@ DrawerGUI resetgui;
 boolean darkmode;
 
 void setup() {
-  //fullScreen();
-  size(720, 1280);
+  fullScreen();
   orientation(PORTRAIT);
   background(0);
   
