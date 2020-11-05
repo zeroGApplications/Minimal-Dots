@@ -27,8 +27,8 @@ public class Board {
     
     score_r = 30*ConstantData.gui_size_multiplyer;
     
-    int field_size = width%int(s);
-    wdh = 10;//min(10,field_size);
+    int field_size = width/int(s);
+    wdh = min(10,field_size);
     hgt = wdh;
     
     o = new PVector(
