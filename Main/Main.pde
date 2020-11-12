@@ -4,9 +4,18 @@ Line l;
 DrawerGUI themegui;
 DrawerGUI resetgui;
 boolean darkmode;
+boolean debugmode = false;
+
+void settings() {
+  if(!debugmode) {
+    fullScreen();
+  } else {
+    //size(720,1280);
+    size(1080,1920);
+  }
+}
 
 void setup() {
-  fullScreen();
   orientation(PORTRAIT);
   background(0);
   
@@ -109,6 +118,7 @@ void mousePressed() {
     if(option == 1) {
       Saver tmp = new Saver(true);
       tmp.theme = b.theme;
+      tmp.highscores = b.highscores;
       Board nb = new Board(tmp);
       b = nb;
       b.darkmode = darkmode; // refresh the Borads memory that it still is in darkmode (or not)

@@ -7,7 +7,7 @@ public class Saver {
   int theme;
   int darkmode;
   int[] scores;
-  int[] high_scores; // optional
+  int[] highscores;
   int[][] board_data;
   int[][] specials_map;
 
@@ -17,7 +17,7 @@ public class Saver {
     theme = 0;
     darkmode = 0;
     scores = new int[4];
-    high_scores = new int[4];
+    highscores = new int[4];
     board_data = new int[10][10];
     specials_map = new int[10][10];
     
@@ -36,7 +36,7 @@ public class Saver {
   
   public void generateFresh() {
     scores = new int[]{0,0,0,0};
-    high_scores = new int[]{0,0,0,0};
+    highscores = new int[]{0,0,0,0};
     for(int x=0;x<10;x++) {
       for(int y=0;y<10;y++) {
         board_data[x][y] = int(random(0,4));
@@ -50,7 +50,7 @@ public class Saver {
       theme = int(lines[0]);
       darkmode = int(lines[1]);
       scores = int(split(lines[2], ' '));
-      high_scores = int(split(lines[3], ' '));
+      highscores = int(split(lines[3], ' '));
       for(int y=0;y<10;y++) {
         board_data[y] = int(split(lines[4+y], ' '));
       }
@@ -68,7 +68,7 @@ public class Saver {
     res[0] = nf(board.theme, 0);
     res[1] = nf(board.darkmode?1:0, 0);
     res[2] = join(nf(board.scores, 0), ' ');
-    res[3] = "0 0 0 0";
+    res[3] = join(nf(board.highscores, 0), ' ');
     for(int y=0;y<10;y++) {
       res[4+y] = join(nf(board.f[y], 0), ' ');
     }

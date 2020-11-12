@@ -7,6 +7,7 @@ public class DrawerGUI {
   float r;
   boolean dir;
   boolean active;
+  boolean pressed;
   int options;
   float r_opt;
   float s;
@@ -24,6 +25,7 @@ public class DrawerGUI {
     r = 120*ConstantData.gui_size_multiplyer;
     dir = false;
     active = false;
+    pressed = false;
     r_opt = r-padding;
     length = options*r;
     s = (length-padding)/options;
@@ -61,27 +63,20 @@ public class DrawerGUI {
     noStroke();
     fill(clr1);
     ellipse(pos.x,pos.y,r,r);
-    if(active) {
-      float tmp = getFormulaValue();
-      translate(pos.x,pos.y);
-      rotate(-TWO_PI*tmp);
-      drawIcon(0,0);
-      rotate(TWO_PI*tmp);
-      translate(-pos.x,-pos.y);
-      
-    } else {
-      drawIcon(pos.x,pos.y);
-    }
-  }
-  
-  private void drawIcon(float nx, float ny) {
+    
     tint(darkmode?180:120);
-    image(icon,nx,ny,r-padding,r-padding);
+    if(active && pressed) {
+      image(icon,pos.x,pos.y,(r-padding)*0.9,(r-padding)*0.9);
+    } else {
+      image(icon,pos.x,pos.y,r-padding,r-padding);
+    }
+    
     noTint();
   }
   
   public void update() {
     if(!active) {
+      pressed = false;
       return;
     }
     if(!dir) {
@@ -105,6 +100,7 @@ public class DrawerGUI {
   public void press() {
     if(dist(mouseX,mouseY,pos.x,pos.y) <= r*0.8) {
       active = true;
+      pressed = true;
     }
   }
   

@@ -11,6 +11,7 @@ public class Board {
   int[] clrs;
   int[] scores;
   int[] scores_goal;
+  int[] highscores;
   
   float r;
   float s;
@@ -53,6 +54,10 @@ public class Board {
     clrs = themes[theme];
     scores = saver.scores;
     scores_goal = new int[scores.length];
+    for(int i=0;i<scores.length;i++) {
+      scores_goal[i] = scores[i];
+    }
+    highscores = saver.highscores;
     
     f = new int[wdh][hgt];
     f_show = new ArrayList<ArrayList<Tile>>();
@@ -97,11 +102,33 @@ public class Board {
       noStroke();
       fill(darkmode?255:0);
       PVector spos = getScoresLocation(i);
-      text(scores[i],
-        spos.x-25,
+      text(number(scores[i]),
+        spos.x-25*ConstantData.gui_size_multiplyer,
         spos.y);
       fill(clrs[i]);
       ellipse(spos.x,spos.y,score_r,score_r);
+      if(highscores[i] > scores[i]) {
+        
+        stroke(clrs[i]);
+        strokeWeight(score_r);
+        rect(spos.x,
+             spos.y-95*ConstantData.gui_size_multiplyer,
+             130*ConstantData.gui_size_multiplyer,
+             50*ConstantData.gui_size_multiplyer,10);
+             
+        if(brightness(clrs[i]) > 100) {
+          fill(0);
+        } else {
+          fill(255);
+        }
+        
+        textAlign(CENTER, CENTER);
+        text(number(highscores[i]),
+        spos.x,
+        spos.y-100*ConstantData.gui_size_multiplyer);
+        textAlign(RIGHT, CENTER);
+      }
+      
     }
     
     if(animated_tiles.size() > 0) {
@@ -135,7 +162,12 @@ public class Board {
         }
       }
     }
+    
     for(int i=0; i<scores.length; i++) {
+      assert(scores[i] <= scores_goal[i]);
+      if(highscores[i] < scores[i]) {
+        highscores[i] = scores[i];
+      }
       if(scores_goal[i] > scores[i]) {
         scores[i]++;
       }
@@ -156,10 +188,20 @@ public class Board {
     }
   }
   
+  public String number(int num) {
+    if(num > 9990) {
+      return nf(num/1000.0f, 0, 1)+"k";
+    } else if(num > 999) {
+      return nf(float(num)/1000.0, 0, 2)+"k";
+    } else {
+      return num+"";
+    }
+  }
+  
   public PVector getScoresLocation(int index) {
     float xi = width/2.0
-        -((scores.length-1)/2.0)*200*ConstantData.gui_size_multiplyer
-        +index*200*ConstantData.gui_size_multiplyer;
+        -((scores.length-1)/2.0)*210*ConstantData.gui_size_multiplyer
+        +index*210*ConstantData.gui_size_multiplyer;
     float y = height-250*ConstantData.gui_size_multiplyer;
     return new PVector(
       xi,
