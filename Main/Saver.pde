@@ -75,11 +75,7 @@ public class Saver {
     for(int x=0;x<10;x++) {
       String tmp = "";
       for(int y=0;y<10;y++) {
-        if(board.f_show.get(x).get(y).special) {
-          tmp += "1 ";
-        } else {
-          tmp += "0 ";
-        }
+        tmp += nf(board.f_show.get(x).get(y).special, 0);
       }
       res[14+x] = tmp;
     }

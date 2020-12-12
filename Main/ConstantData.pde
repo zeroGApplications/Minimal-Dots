@@ -10,4 +10,8 @@ public static class ConstantData {
       gui_size_multiplyers.y;
   }
   
+  public enum EffectType {
+    NONE, CLEAR_COLOR, CLEAR_LINE_HORIZONTAL, CLEAR_LINE_VERTICAL;
+  }
+  
 }

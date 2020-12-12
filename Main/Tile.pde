@@ -9,7 +9,7 @@ public class Tile {
   float t = 0;
   int clr_id;
   boolean done;
-  boolean special;
+  int special;
   boolean selected;
   
   public Tile(PVector nstart, PVector nend, int nclr_id) {
@@ -45,8 +45,8 @@ public class Tile {
     r_end = 60*ConstantData.gui_size_multiplyer;
     clr_id = nclr_id;
     done = false;
-    if(random(0,1)>0.99) {
-      special = true;
+    if(random(0,1)>0.95) {
+      special = int(random(1,4));
     }
     selected = false;
   }
@@ -60,7 +60,7 @@ public class Tile {
     if(selected) {
       r += margin;
     }
-    if(special) {
+    if(special == 1) {
       if(selected) {
         fill(clrs[clr_id]);
       } else {
@@ -69,6 +69,28 @@ public class Tile {
       stroke(clrs[clr_id]);
       strokeWeight(20);
       rect(pos.x,pos.y,r-margin,r-margin, 10);
+    } else if(special == 2) {
+      if(selected) {
+        stroke(clrs[clr_id]);
+        strokeWeight(20);
+        fill(clrs[clr_id]);
+        rect(pos.x,pos.y,r-margin,(r-margin)/2.0, 5);
+      } else {
+        stroke(clrs[clr_id]);
+        strokeWeight(20);
+        line(pos.x-(r-margin)/2.0,pos.y,pos.x+(r-margin)/2.0,pos.y);
+      }
+    } else if(special == 3) {
+      if(selected) {
+        stroke(clrs[clr_id]);
+        strokeWeight(20);
+        fill(clrs[clr_id]);
+        rect(pos.x,pos.y,(r-margin)/2.0,r-margin, 5);
+      } else {
+        stroke(clrs[clr_id]);
+        strokeWeight(20);
+        line(pos.x,pos.y-(r-margin)/2.0,pos.x,pos.y+(r-margin)/2.0);
+      }
     } else {
       noStroke();
       fill(clrs[clr_id]);

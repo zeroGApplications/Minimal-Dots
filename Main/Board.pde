@@ -71,15 +71,13 @@ public class Board {
         f_show.get(x).add(
           new Tile(getPointAtCoords(x,y),
                    f[x][y]));
-        f_show.get(x).get(y).special = false;
+        f_show.get(x).get(y).special = 0;
       }
     }
     
     for(int x=0;x<wdh;x++) {
       for(int y=0;y<hgt;y++) {
-        if(saver.specials_map[x][y] == 1) {
-          f_show.get(x).get(y).special = true;
-        }
+        f_show.get(x).get(y).special = saver.specials_map[x][y];
       }
     }
       
@@ -246,10 +244,9 @@ public class Board {
     return diffx+diffy == 1;
   }
   
-  public int clearLine(Line line) { // returns special-effect color-id
-    int res = -1;
-    if(l.points.size() < 3) {
-      return res;
+  public void clearLine(Line line, LinkedList<Effect> effects) {
+    if(line.points.size() < 3) {
+      return;
     }
     for(PVector pnt : line.points) {
       PVector coord = getCoordsAtPoint(pnt);
@@ -265,13 +262,24 @@ public class Board {
       
       animated_tiles.add(tile);
       
-      if(f_show.get(px).get(py).special) {
-        res = f[px][py];
+      if(f_show.get(px).get(py).special != 0) {
+        int effect_index = f_show.get(px).get(py).special;
+        Effect effect = new Effect(ConstantData.EffectType.values()[effect_index]);
+        f_show.get(px).get(py).special = 0;
+        switch(effect.effect) {
+          case NONE: break;
+          case CLEAR_COLOR: effect.clr = f[px][py]; break;
+          case CLEAR_LINE_HORIZONTAL: effect.pos.y = py; break;
+          case CLEAR_LINE_VERTICAL: effect.pos.x = px; break;
+        }
+        effects.add(effect);
       }
       f[px][py] = -1;
       f_show.get(px).set(py, null);
     }
+    
     fall();
+    
     for(int x=0;x<wdh;x++) {
       for(int y=0;y<f_show.get(x).size();y++) {
         if(f_show.get(x).get(y) == null) {
@@ -298,7 +306,17 @@ public class Board {
       }
     }
     
-    return res;
+    /*if(effects.size() != 0) {
+      for(int[] effect : effects) {
+        print(effect[0]+" : "+effect[1]+" : "+effect[2]+" : "+effect[3]);
+      }
+      print("\n");
+      for(int[] effect : effects) {
+        b.activateSpecialEffect(effect);
+      }
+    }*/
+    
+    
   }
   
   public void fall() {
@@ -321,18 +339,6 @@ public class Board {
         }
       }
     }
-  }
-  
-  public void activateSpecialEffect(int val) {
-    Line tmp = new Line(-1);
-    for(int y=0;y<hgt;y++) {
-      for(int x=0;x<wdh;x++) {
-        if(f[x][y] == val) {
-          tmp.feed(getPointAtCoords(x,y));
-        }
-      }
-    }
-    clearLine(tmp);
   }
   
   public int[] getThemePreview() {

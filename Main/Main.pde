@@ -1,17 +1,21 @@
+import java.util.LinkedList;
+
 Saver s;
 Board b;
 Line l;
 DrawerGUI themegui;
 DrawerGUI resetgui;
 boolean darkmode;
-boolean debugmode = false;
+boolean debugmode = true;
+LinkedList<Effect> effect_queue;
+int effect_delay;
 
 void settings() {
   if(!debugmode) {
     fullScreen();
   } else {
-    //size(720,1280);
-    size(1080,1920);
+    size(720,1280);
+    //size(1080,1920);
   }
 }
 
@@ -38,6 +42,9 @@ void setup() {
     new int[]{#ff5577, #55ff77},
     reset_gui_icon);
   
+  effect_queue = new LinkedList<Effect>();
+  effect_delay = 0;
+  
   if(s.darkmode == 1) {
     darkmode = true;
     applyDarkmode();
@@ -49,10 +56,22 @@ void setup() {
   textAlign(RIGHT, CENTER);
   rectMode(CENTER);
   imageMode(CENTER);
+  
+  if(debugmode) {
+    //frameRate(5);
+  }
 }
 
 void draw() {
   background(darkmode?0:255);
+  
+  if(!effect_queue.isEmpty() && effect_delay <= 0) {
+    effect_delay = 100;
+    Effect effect = effect_queue.remove();
+    effect.constructLine(b);
+    b.clearLine(effect.line, effect_queue);
+  }
+  effect_delay--;
   
   if(mousePressed) {
     PVector coords = b.getCoordsAtMouse();
@@ -90,10 +109,7 @@ void draw() {
 
 void mouseReleased() {
   if(l.drawing) {
-    int effect = b.clearLine(l);
-    if(effect != -1) {
-      b.activateSpecialEffect(effect);
-    }
+    b.clearLine(l, effect_queue);
     l.reset();
   }
 }
