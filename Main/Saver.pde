@@ -30,8 +30,6 @@ public class Saver {
       
       generateFresh();
     }
-    
-    noStroke();
   }
   
   public void generateFresh() {
@@ -65,12 +63,12 @@ public class Saver {
 
   public void saveData(Board board) {
     String[] res = new String[24];
-    res[0] = nf(board.theme, 0);
-    res[1] = nf(board.darkmode?1:0, 0);
-    res[2] = join(nf(board.scores, 0), ' ');
-    res[3] = join(nf(board.highscores, 0), ' ');
+    res[0] = str(board.theme);
+    res[1] = board.darkmode?"1":"0";
+    res[2] = join(toStringArray(board.scores), ' ');
+    res[3] = join(toStringArray(board.highscores), ' ');
     for(int y=0;y<10;y++) {
-      res[4+y] = join(nf(board.f[y], 0), ' ');
+      res[4+y] = join(toStringArray(board.f[y]), ' ');
     }
     for(int x=0;x<10;x++) {
       String tmp = "";
@@ -83,9 +81,15 @@ public class Saver {
       }
       res[14+x] = tmp;
     }
+    
     saveStrings(filename, res);
   }
   
-  
-  
+  private String[] toStringArray(int[] arr) {
+    String[] res = new String[arr.length];
+    for(int i=0; i<arr.length; i++) {
+      res[i] = str(arr[i]);
+    }
+    return res;
+  }
 }

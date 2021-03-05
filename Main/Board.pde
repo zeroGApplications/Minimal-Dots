@@ -355,4 +355,18 @@ public class Board {
       clrs = themes[theme];
     }
   }
+  
+  public boolean isEmpty() {
+    int sum = 0;
+    for(int i=0; i<4; i++) {
+      sum += highscores[i];
+      sum += scores[i];
+    }
+    for(int y=0;y<hgt;y++) {
+      for(int x=0;x<wdh;x++) {
+        sum += f[x][y];
+      }
+    }
+    return sum == 0;
+  }
 }

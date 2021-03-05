@@ -131,7 +131,9 @@ void mousePressed() {
 }
 
 void stop() {
-  s.saveData(b);
+  if(!b.isEmpty()) {
+    s.saveData(b);
+  }
 }
 
 void applyDarkmode() {
