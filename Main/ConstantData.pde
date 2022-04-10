@@ -1,17 +1,17 @@
-public static class ConstantData {
-  
-  static PVector gui_size_multiplyers;
-  static float gui_size_multiplyer;
-  
-  public static void initialize(float wdh, float hgt) {
-    gui_size_multiplyers = new PVector(wdh/1080.0, hgt/1920.0);
-    gui_size_multiplyer = (gui_size_multiplyers.x < gui_size_multiplyers.y) ? 
-      gui_size_multiplyers.x : 
-      gui_size_multiplyers.y;
-  }
-  
-  public enum EffectType {
-    NONE, CLEAR_COLOR, CLEAR_LINE_HORIZONTAL, CLEAR_LINE_VERTICAL;
-  }
-  
+PVector GUI_SIZE_MULTIPLYERS = new PVector(0, 0);
+float GUI_SIZE_MULTIPLYER = 0.0;
+float SPECIAL_TILE_PROBABILITY = 0.51;
+boolean DARKMODE = false;
+
+void initialize(float wdh, float hgt) {
+	GUI_SIZE_MULTIPLYERS = new PVector(wdh / 1080.0, hgt / 1920.0);
+	GUI_SIZE_MULTIPLYER = min(GUI_SIZE_MULTIPLYERS.x, GUI_SIZE_MULTIPLYERS.y);
+}
+
+public enum EffectType {
+	NONE, CLEAR_COLOR, CLEAR_LINE_HORIZONTAL, CLEAR_LINE_VERTICAL;
+}
+
+public float spring_equation(float x) {
+	return -0.5 * exp(-6 * x) * (-2 * exp(6 * x) + sin(8 * x) + 2 * cos(8 * x));
 }
