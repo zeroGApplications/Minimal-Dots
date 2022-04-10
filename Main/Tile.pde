@@ -24,9 +24,6 @@ public class Tile {
 		done = false;
 		selected = false;
 		effect = EffectType.NONE;
-		if (random(0, 1) < SPECIAL_TILE_PROBABILITY) {
-			effect = EffectType.values()[int(random(1, 4))];
-		}
 	}
 	
 	public Tile(PVector nstart, PVector nend, int nclr_id) {
@@ -35,6 +32,9 @@ public class Tile {
 	
 	public Tile(PVector nstart, int nclr_id) {
 		this(nstart, nstart, nclr_id, 60, 60);
+    if (random(0, 1) < SPECIAL_TILE_PROBABILITY) {
+      effect = EffectType.values()[int(random(1, 4))];
+    }
 	}
 	
 	public void show(int[] clrs) {
