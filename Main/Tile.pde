@@ -8,6 +8,7 @@ public class Tile {
 	float radius;
 	float time;
 	int clr_id;
+	color line_color;
 	boolean done;
 	boolean selected;
 	EffectType effect;
@@ -32,12 +33,12 @@ public class Tile {
 	
 	public Tile(PVector nstart, int nclr_id) {
 		this(nstart, nstart, nclr_id, 60, 60);
-    if (random(0, 1) < SPECIAL_TILE_PROBABILITY) {
-      effect = EffectType.values()[int(random(1, 4))];
-    }
+		if (random(0, 1) < SPECIAL_TILE_PROBABILITY) {
+			effect = EffectType.values()[int(random(1, 4))];
+		}
 	}
 	
-	public void show(int[] clrs) {
+	public void show(IntList colors) {
 		float margin = 20 * GUI_SIZE_MULTIPLYER;
 		if (selected) {
 			radius  += margin;
@@ -46,42 +47,39 @@ public class Tile {
 		float lineWidth = radius / 3.0;
 		float rectangleRoundness = radius / 8.0;
 
+		color tile_color = colors.get(clr_id);
+		if (selected) {
+			tile_color = line_color;
+		}
+
+		stroke(tile_color);
+		fill(tile_color);
 		switch(effect) {
 			case NONE:
 				noStroke();
-				fill(clrs[clr_id]);
 				ellipse(pos.x, pos.y, radius, radius);
 				break;
 			case CLEAR_COLOR:
-				if (selected) {
-					fill(clrs[clr_id]);
-				} else {
+				if (!selected) {
 					noFill();
 				}
-				stroke(clrs[clr_id]);
 				strokeWeight(lineWidth);
 				rect(pos.x, pos.y, radius - margin, radius - margin, rectangleRoundness);
 				break;
 			case CLEAR_LINE_HORIZONTAL:
 				if (selected) {
-					stroke(clrs[clr_id]);
 					strokeWeight(lineWidth);
-					fill(clrs[clr_id]);
 					rect(pos.x, pos.y, radius - margin, (radius - margin) / 2.0, rectangleRoundness);
 				} else {
-					stroke(clrs[clr_id]);
 					strokeWeight(lineWidth * 1.5);
 					line(pos.x - (radius - margin) / 2.0, pos.y, pos.x + (radius - margin) / 2.0, pos.y);
 				}
 				break;
 			case CLEAR_LINE_VERTICAL:
 				if (selected) {
-					stroke(clrs[clr_id]);
 					strokeWeight(lineWidth);
-					fill(clrs[clr_id]);
 					rect(pos.x, pos.y, (radius - margin) / 2.0, radius - margin, rectangleRoundness);
 				} else {
-					stroke(clrs[clr_id]);
 					strokeWeight(lineWidth * 1.5);
 					line(pos.x, pos.y - (radius - margin) / 2.0, pos.x, pos.y + (radius - margin) / 2.0);
 				}
@@ -115,7 +113,8 @@ public class Tile {
 		done = false;
 	}
 	
-	public void select() {
+	public void select(color nline_color) {
+		line_color = nline_color;
 		selected = true;
 	}
 	public void deselect() {

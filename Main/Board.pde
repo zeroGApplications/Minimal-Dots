@@ -1,3 +1,6 @@
+import java.util.Arrays;
+import java.util.List;
+
 public class Board {
 	
 	int wdh;
@@ -8,7 +11,7 @@ public class Board {
 	int theme;
 	int[][] themes;
 	int[][] dark_themes;
-	int[] colors;
+	IntList colors;
 	int[] scores;
 	int[] scores_goal;
 	int[] highscores;
@@ -37,16 +40,18 @@ public class Board {
 			{#ffdd77, #77ddff, #ddff77, #ff77dd} ,
 			{#ffcc33, #3388ff, #33dd55, #ff3333} ,
 			{#ffe66d, #4ecdc4, #292f36 ,#ff6b7b} ,
+			{#00BDFE, #FF0198, #FEE600 ,#000000} ,
 			{0} ,
 		};
 		dark_themes = new int[][]{
 			{#eac435, #345995, #03cea4, #ca1551} ,
 			{#ffcc33, #3388ff, #33dd55, #ff3333} ,
 			{#ffe66d, #4ecdc4, #eef4ed ,#ff6b7b} ,
+			{#00BDFE, #FF0198, #FEE600 ,#ffffff} ,
 			{255} ,
 		};
 		
-		colors = themes[theme];
+		colors = new IntList(themes[theme]);
 		scores = saver.scores;
 		scores_goal = new int[scores.length];
 		for (int i = 0; i < scores.length; i++) {
@@ -93,14 +98,14 @@ public class Board {
 			fill(DARKMODE ? 255 : 0);
 			PVector spos = getScoresLocation(i);
 			text(number(scores[i]), spos.x - 25 * GUI_SIZE_MULTIPLYER, spos.y);
-			fill(colors[i]);
+			fill(colors.get(i));
 			ellipse(spos.x,spos.y,score_radius,score_radius);
 			if (highscores[i] > scores[i]) {
-				stroke(colors[i]);
+				stroke(colors.get(i));
 				strokeWeight(score_radius);
 				rect(spos.x, spos.y - 95 * GUI_SIZE_MULTIPLYER, 130 * GUI_SIZE_MULTIPLYER, 50 * GUI_SIZE_MULTIPLYER, 5);
 				
-				if (brightness(colors[i]) > 100) {
+				if (brightness(colors.get(i)) > 100) {
 					fill(0);
 				} else {
 					fill(255);
@@ -136,7 +141,7 @@ public class Board {
 				tile.update();
 			}
 			for (int i = 0; i < animated_tiles.size(); i++) {
-				Tile tmp= animated_tiles.get(i);
+				Tile tmp = animated_tiles.get(i);
 				if (tmp.done) {
 					animated_tiles.remove(i);
 					i--;
@@ -165,7 +170,7 @@ public class Board {
 			PVector coord = getCoordsAtPoint(point);
 			int px = int(coord.x);
 			int py = int(coord.y);
-			tiles.get(px).get(py).select();
+			tiles.get(px).get(py).select(line.mix_color);
 		}
 	}
 	
@@ -200,14 +205,14 @@ public class Board {
 		return new PVector(res_x, res_y);
 	}
 	
-	PVector getPointAtCoords(int nx, int ny) {
-		float res_x = offset.x + nx * spacing;
-		float res_y = offset.y + ny * spacing;
+	PVector getPointAtCoords(int x, int y) {
+		float res_x = offset.x + x * spacing;
+		float res_y = offset.y + y * spacing;
 		return new PVector(res_x, res_y);
 	}
 	
 	int getClrAt(int x, int y) {
-		return colors[field[x][y]];
+		return colors.get(field[x][y]);
 	}
 	
 	public boolean isVonNeumannNeighbor(PVector p1, PVector p2) {
@@ -312,9 +317,9 @@ public class Board {
 	public void setTheme(int index) {
 		theme = index;
 		if (DARKMODE) {
-			colors = dark_themes[theme];
+      		colors = new IntList(dark_themes[theme]);
 		} else {
-			colors = themes[theme];
+			colors = new IntList(themes[theme]);
 		}
 	}
 }

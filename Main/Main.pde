@@ -68,19 +68,7 @@ void draw() {
 	effect_delay--;
 	
 	if (mousePressed) {
-		PVector coords = board.getCoordsAtMouse();
-		if (coords != null) {
-			if (!line.drawing) {
-				line.beginDraw(board.getClrAt(
-					int(coords.x),
-					int(coords.y)));
-			}
-			if (line.points.size() < 1 || board.isVonNeumannNeighbor(board.getCoordsAtPoint(line.getLast()), coords)) {
-				if (board.getClrAt(int(coords.x), int(coords.y)) == line.clr) {
-					line.feed(board.getPointAtCoords(int(coords.x), int(coords.y)));
-				}
-			}
-		}
+		line.update(board);
 	}
 	
 	board.update();
@@ -105,9 +93,9 @@ void mousePressed() {
 	themegui.press();
 	if (themegui.extended()) {
 		int option = themegui.select();
-		if (option != -1 && option != 3) {
+		if (option != -1 && option != board.colors.size()) {
 			board.setTheme(option);
-		} else if (option == 3) {
+		} else if (option == board.colors.size()) {
 			DARKMODE = !DARKMODE;
 			applyDarkmode();
 		} else {
