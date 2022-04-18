@@ -1,9 +1,9 @@
 public class Line {
 	
 	ArrayList<PVector> points;
-	ArrayList<Integer> colors;
+	ArrayList<Color> colors;
 	PVector last_mouse_coords;
-	color mix_color;
+	Color mix_color;
 	int cooldown;
 	boolean drawing;
 	boolean multicolored;
@@ -12,7 +12,7 @@ public class Line {
 	public Line(float nradius) {
 		radius = nradius * GUI_SIZE_MULTIPLYER;
 		points = new ArrayList<PVector>();
-		colors = new ArrayList<Integer>();
+		colors = new ArrayList<Color>();
 		last_mouse_coords = new PVector(-1, -1);
 		reset();
 	}
@@ -20,7 +20,7 @@ public class Line {
 	public void reset() {
 		points.clear();
 		colors.clear();
-		mix_color = 0;
+		mix_color = new Color();
 		cooldown = MULTICOLOR_COOLDOWN;
 		drawing = false;
 		multicolored = false;
@@ -40,7 +40,16 @@ public class Line {
 		int x = int(coords.x);
 		int y = int(coords.y);
 		for (PVector point : points) {
-			if (pointsEqual(point, board.getPointAtCoords(x, y))) {
+			if (pointsEqual(point, board.getPointAt(x, y))) {
+				return;
+			}
+		}
+
+		Color current_color = board.getClrAt(x, y);
+		boolean becoming_multicolored = !colors.isEmpty() && !current_color.equals(colors.get(0));
+		int combined_weight = getCombinedWeight() + current_color.weight();
+		if (multicolored || becoming_multicolored) {
+			if (points.size() > 8 || combined_weight > 9 || board.getTileAt(x, y).special()) {
 				return;
 			}
 		}
@@ -56,9 +65,9 @@ public class Line {
 			drawing = true;
 		}
 
-		if (mix_color == board.getClrAt(x, y) || cooldown == 0 || points.isEmpty()) {
-			feed(board.getPointAtCoords(x, y));
-			colors.add(board.getClrAt(x, y));
+		if (mix_color.equals(current_color) || cooldown == 0 || points.isEmpty() || multicolored) {
+			feed(board.getPointAt(x, y));
+			colors.add(current_color);
 			mixColors();
 		}
 	}
@@ -76,57 +85,22 @@ public class Line {
 		for (int i = 1; i < points.size(); i++) {
 			PVector point = points.get(i);
 			PVector prev_point = points.get(i - 1);
-			stroke(mix_color);
+			stroke(rgb(mix_color));
 			line(point.x, point.y, prev_point.x, prev_point.y);
 		}
 	}
-	
-	public boolean pointsEqual(PVector p1, PVector p2) {
-		if (p1 == null || p2 == null) {
-			return false;
-		}
-		float EPSYLON = 0.01;
-		return abs(p1.x - p2.x) < EPSYLON && abs(p1.y - p2.y) < EPSYLON;
-		
-	}
 
 	public void mixColors() {
-		float r_sum = 0, g_sum = 0, b_sum = 0;
-		float r, g, b;
-		float max_luminocity = 0;
-		for(color clr : colors) {
-			r = red(clr) / 255.0;
-			g = green(clr) / 255.0;
-			b = blue(clr) / 255.0;
-			float luminocity = r * 0.2126 + g * 0.7152 + b * 0.0722;
-			max_luminocity = max(luminocity, max_luminocity);
-			r_sum += r;
-			g_sum += g;
-			b_sum += b;
+		mix_color = Color.fromMixColors(colors);
+		multicolored = !mix_color.equals(colors.get(0));
+	}
+
+	public int getCombinedWeight() {
+		int result = 0;
+		for (Color clr : colors) {
+			result += clr.weight();
 		}
-
-		float count = colors.size();
-		r = r_sum / count;
-		g = g_sum / count;
-		b = b_sum / count;
-
-		float average_luminocity = r * 0.2126 + g * 0.7152 + b * 0.0722;
-		float luminocity_difference = (max_luminocity - average_luminocity) / 2.0;
-
-		r += luminocity_difference * 0.2126;
-		g += luminocity_difference * 0.7152;
-		b += luminocity_difference * 0.0722;
-
-		mix_color = color(r * 255.0, g * 255.0, b * 255.0);
-
-		colorMode(HSB);
-		float hue = hue(mix_color);
-		float saturation = min(saturation(mix_color) * 1.2, 255.0);
-		float value = brightness(mix_color);
-		mix_color = color(hue, saturation, value);
-		colorMode(RGB);
-
-		multicolored = (mix_color != colors.get(0));
+		return result;
 	}
 
 	public void removeLastSelection() {

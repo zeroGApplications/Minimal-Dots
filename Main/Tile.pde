@@ -8,7 +8,7 @@ public class Tile {
 	float radius;
 	float time;
 	int clr_id;
-	color line_color;
+	Color line_color;
 	boolean done;
 	boolean selected;
 	EffectType effect;
@@ -38,7 +38,7 @@ public class Tile {
 		}
 	}
 	
-	public void show(IntList colors) {
+	public void show(Board board) {
 		float margin = 20 * GUI_SIZE_MULTIPLYER;
 		if (selected) {
 			radius  += margin;
@@ -47,13 +47,13 @@ public class Tile {
 		float lineWidth = radius / 3.0;
 		float rectangleRoundness = radius / 8.0;
 
-		color tile_color = colors.get(clr_id);
+		Color tile_color = clr(board);
 		if (selected) {
 			tile_color = line_color;
 		}
 
-		stroke(tile_color);
-		fill(tile_color);
+		stroke(rgb(tile_color));
+		fill(rgb(tile_color));
 		switch(effect) {
 			case NONE:
 				noStroke();
@@ -113,11 +113,19 @@ public class Tile {
 		done = false;
 	}
 	
-	public void select(color nline_color) {
+	public void select(Color nline_color) {
 		line_color = nline_color;
 		selected = true;
 	}
 	public void deselect() {
 		selected = false;
+	}
+
+	public boolean special() {
+		return effect != EffectType.NONE;
+	}
+
+	public Color clr(Board board) {
+		return board.colors.get(clr_id);
 	}
 }

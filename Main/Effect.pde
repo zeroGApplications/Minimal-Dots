@@ -24,22 +24,20 @@ public class Effect {
 	public void constructClearColorLine(Board board) {
 		for (int y = 0; y < board.hgt; y++) {
 			for (int x = 0; x < board.wdh; x++) {
-				if (board.field[x][y] == clr) {
-					line.feed(board.getPointAtCoords(x, y));
-				}
+				line.feed(board.getPointAt(x, y));
 			}
 		}
 	}
 	
 	public void constructClearHorizontalLine(Board board) {
 		for (int x = 0; x < board.wdh; x++) {
-			line.feed(board.getPointAtCoords(x, int(position.y)));
+			line.feed(board.getPointAt(x, int(position.y)));
 		}
 	}
 	
 	public void constructClearVerticalLine(Board board) {
 		for (int y = 0; y < board.hgt; y++) {
-			line.feed(board.getPointAtCoords(int(position.x), y));
+			line.feed(board.getPointAt(int(position.x), y));
 		}
 	}
 }

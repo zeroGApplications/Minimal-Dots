@@ -1,17 +1,17 @@
 import java.util.Arrays;
 import java.util.List;
+import java.util.LinkedList;
 
 public class Board {
 	
 	int wdh;
 	int hgt;
-	int[][] field;
-	ArrayList<ArrayList<Tile>> tiles;
+	ArrayList<LinkedList<Tile>> tiles;
 	
 	int theme;
 	int[][] themes;
 	int[][] dark_themes;
-	IntList colors;
+	ArrayList<Color> colors;
 	int[] scores;
 	int[] scores_goal;
 	int[] highscores;
@@ -51,7 +51,13 @@ public class Board {
 			{255} ,
 		};
 		
-		colors = new IntList(themes[theme]);
+		colors = new ArrayList<Color>(Arrays.asList(
+			Color.Cyan(),
+			Color.Magenta(),
+			Color.Yellow(),
+			Color.Black()
+		));
+
 		scores = saver.scores;
 		scores_goal = new int[scores.length];
 		for (int i = 0; i < scores.length; i++) {
@@ -59,16 +65,13 @@ public class Board {
 		}
 		highscores = saver.highscores;
 		
-		field = new int[wdh][hgt];
-		tiles = new ArrayList<ArrayList<Tile>>();
+		tiles = new ArrayList<LinkedList<Tile>>();
 		
 		for (int x = 0; x < wdh; x++) {
-			tiles.add(new ArrayList<Tile>());
+			tiles.add(new LinkedList<Tile>());
 			
-			for (int y = 0; y < hgt; y++) {
-				field[x][y] = saver.board_data[x][y];
-				
-				tiles.get(x).add(new Tile(getPointAtCoords(x,y), field[x][y]));
+			for (int y = 0; y < hgt; y++) {				
+				tiles.get(x).add(new Tile(getPointAt(x, y), saver.board_data[x][y]));
 				tiles.get(x).get(y).effect = EffectType.NONE;
 			}
 		}
@@ -85,10 +88,8 @@ public class Board {
 	void show() {
 		for (int x = 0; x < wdh; x++) {
 			for (int y = 0; y < hgt; y++) {
-				if (field[x][y] != -1) {
-					if (tiles.get(x).size() > y) {
-						tiles.get(x).get(y).show(colors);
-					}
+				if (tiles.get(x).size() > y) {
+					tiles.get(x).get(y).show(this);
 				}
 			}
 		}
@@ -98,14 +99,14 @@ public class Board {
 			fill(DARKMODE ? 255 : 0);
 			PVector spos = getScoresLocation(i);
 			text(number(scores[i]), spos.x - 25 * GUI_SIZE_MULTIPLYER, spos.y);
-			fill(colors.get(i));
+			fill(rgb(colors.get(i)));
 			ellipse(spos.x,spos.y,score_radius,score_radius);
 			if (highscores[i] > scores[i]) {
-				stroke(colors.get(i));
+				stroke(rgb(colors.get(i)));
 				strokeWeight(score_radius);
 				rect(spos.x, spos.y - 95 * GUI_SIZE_MULTIPLYER, 130 * GUI_SIZE_MULTIPLYER, 50 * GUI_SIZE_MULTIPLYER, 5);
 				
-				if (brightness(colors.get(i)) > 100) {
+				if (colors.get(i).luminocity() > 0.5) {
 					fill(0);
 				} else {
 					fill(255);
@@ -119,7 +120,7 @@ public class Board {
 		
 		if (animated_tiles.size() > 0) {
 			for (Tile tile : animated_tiles) {
-				tile.show(colors);
+				tile.show(this);
 			}
 		}
 	}
@@ -173,6 +174,10 @@ public class Board {
 			tiles.get(px).get(py).select(line.mix_color);
 		}
 	}
+
+	public int generateColorId() {
+		return int(random(0, colors.size()));
+	}
 	
 	public String number(int num) {
 		if (num >= 10000) {
@@ -198,21 +203,25 @@ public class Board {
 	
 	PVector getCoordsAtPoint(PVector point) {
 		int res_x = int((point.x - offset.x) / spacing);
-		int res_y = int((point.y - offset.y) / spacing);
-		if (res_x < 0 || res_x >= wdh || res_y < 0 || res_y >= hgt || field[res_x][res_y] == -1) {
+		int res_y = hgt - int((point.y - offset.y) / spacing);
+		if (res_x < 0 || res_x >= wdh || res_y < 0 || res_y >= hgt) {
 			return null;
 		}
 		return new PVector(res_x, res_y);
 	}
 	
-	PVector getPointAtCoords(int x, int y) {
+	PVector getPointAt(int x, int y) {
 		float res_x = offset.x + x * spacing;
-		float res_y = offset.y + y * spacing;
+		float res_y = offset.y + (hgt - y) * spacing;
 		return new PVector(res_x, res_y);
 	}
+
+	Tile getTileAt(int x, int y) {
+		return tiles.get(x).get(y);
+	}
 	
-	int getClrAt(int x, int y) {
-		return colors.get(field[x][y]);
+	Color getClrAt(int x, int y) {
+		return colors.get(getTileAt(x, y).clr_id);
 	}
 	
 	public boolean isVonNeumannNeighbor(PVector p1, PVector p2) {
@@ -225,79 +234,77 @@ public class Board {
 		if (line.points.size() < 3) {
 			return;
 		}
-		for (PVector point : line.points) {
-			PVector coord = getCoordsAtPoint(point);
-			int px = int(coord.x);
-			int py = int(coord.y);
-			scores_goal[field[px][py]]++;
-			
-			Tile tile = new Tile(point, getScoresLocation(field[px][py]), field[px][py], 80, 30);
-			
-			animated_tiles.add(tile);
-			
-			if (tiles.get(px).get(py).effect != EffectType.NONE) {
-				EffectType effectType = tiles.get(px).get(py).effect;
-				Effect effect = new Effect(effectType);
-				tiles.get(px).get(py).effect = EffectType.NONE;
-				switch(effect.effect) {
-					case NONE: break;
-					case CLEAR_COLOR: effect.clr = field[px][py]; break;
-					case CLEAR_LINE_HORIZONTAL: effect.position.y = py; break;
-					case CLEAR_LINE_VERTICAL: effect.position.x = px; break;
-				}
-				effects.add(effect);
+
+		line.points.sort((p1, p2) -> new Float(p1.y).compareTo(new Float(p2.y)));
+
+		if (line.multicolored) {
+			colors.add(line.mix_color);
+			ArrayList<Tile> kept_tiles = new ArrayList<Tile>();
+
+			for (int i = 0; i < line.mix_color.multiplyer; i++) {
+				PVector coord = getCoordsAtPoint(line.points.get(i));
+				int px = int(coord.x);
+				int py = int(coord.y);
+				int new_clr_id = colors.size() - 1;
+				getTileAt(px, py).clr_id = new_clr_id;
 			}
-			field[px][py] = -1;
-			tiles.get(px).set(py, null);
+			for (int i = line.mix_color.multiplyer; i < line.points.size(); i++) {
+				PVector coord = getCoordsAtPoint(line.points.get(i));
+				int px = int(coord.x);
+				int py = int(coord.y);
+
+				tiles.get(px).remove(py);
+			}
+		} else {
+			for (PVector point : line.points) {
+				PVector coord = getCoordsAtPoint(point);
+				int px = int(coord.x);
+				int py = int(coord.y);
+
+        		Tile current_tile = getTileAt(px, py);
+
+				Tile animated_tile = new Tile(point, new PVector(width/2.0, height - 100), current_tile.clr_id, 80, 30);
+				animated_tiles.add(animated_tile);
+				
+				if (!current_tile.special()) {
+					EffectType effectType = current_tile.effect;
+					Effect effect = new Effect(effectType);
+					current_tile.effect = EffectType.NONE;
+					switch(effect.effect) {
+						case NONE: break;
+						case CLEAR_COLOR: effect.clr = current_tile.clr_id; break;
+						case CLEAR_LINE_HORIZONTAL: effect.position.y = py; break;
+						case CLEAR_LINE_VERTICAL: effect.position.x = px; break;
+					}
+					effects.add(effect);
+				}
+
+				//scores_goal[field[px][py]]++;
+				tiles.get(px).remove(py);
+			}
 		}
 		
 		fall();
-		
-		for (int x = 0; x < wdh; x++) {
-			for (int y = 0; y < tiles.get(x).size(); y++) {
-				if (tiles.get(x).get(y) == null) {
-					tiles.get(x).remove(y);
-					y--;
-				}
-			}
-		}
-		for (int x = 0; x < wdh; x++) {
-			int diff = hgt - tiles.get(x).size();
-			if (diff > 0) {
-				for (int i = 0; i < diff; i++) {
-					tiles.get(x).add(0,new Tile(
-						new PVector(offset.x + x * spacing,offset.y - (i + 1) * spacing),
-						field[x][diff - 1 - i]));
-				}
-			}
-			for (int y = 0; y < hgt; y++) {
-				PVector tmp = getCoordsAtPoint(tiles.get(x).get(y).pos);
-				if (tmp == null || int(tmp.y) != y) {
-					tiles.get(x).get(y).reset();
-					tiles.get(x).get(y).end = getPointAtCoords(x,y);
-				}
-			}
-		} 
 	}
 	
 	public void fall() {
 		for (int x = 0; x < wdh; x++) {
-			int index = hgt - 1;
-			for (int y = hgt - 1; y >=  0; y--) {
-				int tmp = field[x][y];
-				if (tmp != -1) {
-					field[x][y] = -1;
-					field[x][index] = tmp;
-					index--;
+			int line_height = tiles.get(x).size();
+			for (int y = 0; y < line_height; y++) { 
+				Tile current_tile = getTileAt(x, y);
+				if (!pointsEqual(getPointAt(x, y), current_tile.pos)) {
+					current_tile.start = current_tile.pos;
+					current_tile.end = getPointAt(x, y);
 				}
 			}
-		}
-		
-		for (int y = 0; y < hgt; y++) {
-			for (int x = 0; x < wdh; x++) {
-				if (field[x][y] == -1) {
-					field[x][y] = int(random(0,4));
-				}
+
+			if (line_height == hgt) {
+				continue;
+			}
+
+			for (int y = line_height; y < hgt; y++) {
+				int y_index = hgt + y-line_height;
+				tiles.get(x).add(new Tile(getPointAt(x, y_index), getPointAt(x, y), generateColorId()));
 			}
 		}
 	}
@@ -317,9 +324,9 @@ public class Board {
 	public void setTheme(int index) {
 		theme = index;
 		if (DARKMODE) {
-      		colors = new IntList(dark_themes[theme]);
+      		//colors = new IntList(dark_themes[theme]);
 		} else {
-			colors = new IntList(themes[theme]);
+			//colors = new IntList(themes[theme]);
 		}
 	}
 }

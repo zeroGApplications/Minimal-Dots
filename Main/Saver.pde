@@ -73,7 +73,10 @@ public class Saver {
 		res[2] = join(nf(board.scores, 0), ' ');
 		res[3] = join(nf(board.highscores, 0), ' ');
 		for(int y = 0; y < 10; y++) {
-			res[4 + y] = join(nf(board.field[y], 0), ' ');
+      res[4 + y] = "";
+      /*for(int x = 0; x < 10; x++) {
+			  res[4 + y] += int(board.field[y][x]) + ' ';
+      }*/
 		}
 		for(int x = 0; x < 10; x++) {
 			String tmp = "";
