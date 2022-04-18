@@ -49,9 +49,11 @@ void setup() {
 	textSize(50*GUI_SIZE_MULTIPLYER);
 	textAlign(RIGHT, CENTER);
 	rectMode(CENTER);
+	ellipseMode(CENTER);
 	imageMode(CENTER);
 	
 	if (debugmode) {
+		surface.setResizable(true);
 		//frameRate(5);
 	}
 }

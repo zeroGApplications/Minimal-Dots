@@ -44,6 +44,10 @@ public class Color {
 		return c + m + y + k;
 	}
 
+	public boolean isPrimary() {
+		return weight() <= 1;
+	}
+
 	public void reduce() {
 		int extra_multiplyer = gcd(c, gcd(m, gcd(y, k)));
 		c /= extra_multiplyer;
@@ -95,9 +99,7 @@ public class Color {
 	public static Color fromMixColors(ArrayList<Color> colors) {
 		Color sum = new Color();
 
-		float max_luminocity = 0;
 		for(Color clr : colors) {
-			max_luminocity = Math.max(clr.luminocity(), max_luminocity);
 			sum.add(clr);
 		}
 
@@ -110,8 +112,7 @@ public class Color {
 
 		} else {
 			sum.computeRGB();
-			float luminocity_difference = (max_luminocity - sum.luminocity());
-			sum.optimiseColor(luminocity_difference * 0.5f, 0.2f);
+			sum.optimiseColor(0.1f, 0.2f);
 			return sum;
 		}
 	}

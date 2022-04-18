@@ -3,12 +3,12 @@ public class Effect {
 	Line line;
 	EffectType effect;
 	PVector position;
-	int clr;
+	int clr_id;
 	
 	public Effect(EffectType neffect) {
 		effect = neffect;
 		position = new PVector(0, 0);
-		clr = 0;
+		clr_id = 0;
 	}
 	
 	public void constructLine(Board board) {
@@ -24,7 +24,9 @@ public class Effect {
 	public void constructClearColorLine(Board board) {
 		for (int y = 0; y < board.hgt; y++) {
 			for (int x = 0; x < board.wdh; x++) {
-				line.feed(board.getPointAt(x, y));
+				if (board.getTileAt(x, y).clr_id == clr_id) {
+					line.feed(board.getPointAt(x, y));
+				}
 			}
 		}
 	}

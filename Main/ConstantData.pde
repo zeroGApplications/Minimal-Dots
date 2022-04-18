@@ -2,7 +2,8 @@ PVector GUI_SIZE_MULTIPLYERS = new PVector(0, 0);
 float GUI_SIZE_MULTIPLYER = 0.0;
 float SPECIAL_TILE_PROBABILITY = 0.51;
 boolean DARKMODE = false;
-int MULTICOLOR_COOLDOWN = 10;
+int MULTICOLOR_COOLDOWN = 20;
+int MAX_MULTICOLOR = 10;
 
 void initialize(float wdh, float hgt) {
 	GUI_SIZE_MULTIPLYERS = new PVector(wdh / 1080.0, hgt / 1920.0);

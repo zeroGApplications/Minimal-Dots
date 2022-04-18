@@ -26,9 +26,8 @@ public class Board {
 		spacing = 90 * GUI_SIZE_MULTIPLYER;
 		score_radius = 30 * GUI_SIZE_MULTIPLYER;
 		
-		int field_size = width / int(spacing);
-		wdh = min(10,field_size);
-		hgt = wdh;
+		wdh = 10;
+		hgt = 10;
 		
 		offset = new PVector(
 		   (width - ((wdh - 1) * spacing)) / 2.0,
@@ -266,13 +265,13 @@ public class Board {
 				Tile animated_tile = new Tile(point, new PVector(width/2.0, height - 100), current_tile.clr_id, 80, 30);
 				animated_tiles.add(animated_tile);
 				
-				if (!current_tile.special()) {
+				if (current_tile.special()) {
 					EffectType effectType = current_tile.effect;
 					Effect effect = new Effect(effectType);
 					current_tile.effect = EffectType.NONE;
 					switch(effect.effect) {
 						case NONE: break;
-						case CLEAR_COLOR: effect.clr = current_tile.clr_id; break;
+						case CLEAR_COLOR: effect.clr_id = current_tile.clr_id; break;
 						case CLEAR_LINE_HORIZONTAL: effect.position.y = py; break;
 						case CLEAR_LINE_VERTICAL: effect.position.x = px; break;
 					}
