@@ -5,7 +5,7 @@ Board board;
 Line line;
 DrawerGUI themegui;
 DrawerGUI resetgui;
-boolean debugmode = true;
+boolean debugmode = false;
 LinkedList<Effect> effect_queue;
 int effect_delay;
 
@@ -13,10 +13,10 @@ void settings() {
 	if (!debugmode) {
 		fullScreen();
 	} else {
-		//size(720,1280);
+		//size(720, 1280);
 		
-		//size(1080,1920);
-		size(800,800);
+		//size(1080, 1920);
+		size(800, 800);
 	}
 	smooth();
 }
