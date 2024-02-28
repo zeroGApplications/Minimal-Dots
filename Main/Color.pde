@@ -3,15 +3,15 @@ import java.util.ArrayList;
 public class Color {
 
 	// primary colors
-	static final float CYAN[]     = {0.0000f, 0.7411f, 0.9960f}; //#00BDFE
-	static final float MAGENTA[]  = {1.0000f, 0.0039f, 0.5960f}; //#FF0198
-	static final float YELLOW[]   = {0.9960f, 0.9019f, 0.0000f}; //#FEE600
-	static final float BLACK[]    = {0.0000f, 0.0000f, 0.0000f}; //#000000
+	final float CYAN[]     = {0.0000f, 0.7411f, 0.9960f}; //#00BDFE
+	final float MAGENTA[]  = {1.0000f, 0.0039f, 0.5960f}; //#FF0198
+	final float YELLOW[]   = {0.9960f, 0.9019f, 0.0000f}; //#FEE600
+	final float BLACK[]    = {0.0000f, 0.0000f, 0.0000f}; //#000000
 
 	// luminocity coefficients
-	static final float r_coeff = 0.2126f;
-	static final float g_coeff = 0.7152f;
-	static final float b_coeff = 0.0722f;
+	final float r_coeff = 0.2126;
+	final float g_coeff = 0.7152;
+	final float b_coeff = 0.0722;
 	
 	// amounts of primary colors
 	int c, m, y, k;
@@ -28,9 +28,9 @@ public class Color {
 		y = 0;
 		k = 0;
 		multiplyer = 1;
-		r = 0.0f;
-		g = 0.0f;
-		b = 0.0f;
+		r = 0.0;
+		g = 0.0;
+		b = 0.0;
 	}
 
 	public void add(Color in) {
@@ -79,75 +79,71 @@ public class Color {
 		g += missing_luminocity * g_coeff;
 		b += missing_luminocity * b_coeff;
 
-		r = Math.min(r, 1.0f);
-		g = Math.min(g, 1.0f);
-		b = Math.min(b, 1.0f);
+		r = Math.min(r, 1.0);
+		g = Math.min(g, 1.0);
+		b = Math.min(b, 1.0);
 
-		int ir = (int)(r*255.0);
-		int ig = (int)(g*255.0);
-		int ib = (int)(b*255.0);
+		/*
+		int ir = (int)(r * 255.0);
+		int ig = (int)(g * 255.0);
+		int ib = (int)(b * 255.0);
 		float[] hsv = java.awt.Color.RGBtoHSB(ir, ig, ib, null);
 		float h = hsv[0];
-		float s = Math.min(hsv[1] * (1.0f + missing_saturation), 1.0f);
+		float s = Math.min(hsv[1] * (1.0 + missing_saturation), 1.0);
 		float v = hsv[2];
 		float[] rgb = new java.awt.Color(java.awt.Color.HSBtoRGB(h, s, v)).getColorComponents(null);
 		r = rgb[0];
 		g = rgb[1];
 		b = rgb[2];
+		*/
 	}
 
-	public static Color fromMixColors(ArrayList<Color> colors) {
-		Color sum = new Color();
-
+	public Color fromMixColors(ArrayList<Color> colors) {
 		for(Color clr : colors) {
-			sum.add(clr);
+			add(clr);
 		}
 
-		sum.reduce();
+		reduce();
 
-		if (sum.equals(colors.get(0))) {
+		if (equals(colors.get(0))) {
 			Color result = colors.get(0).copy();
-			result.multiplyer = sum.multiplyer;
+			result.multiplyer = multiplyer;
 			return result;
 
 		} else {
-			sum.computeRGB();
-			sum.optimiseColor(0.1f, 0.2f);
-			return sum;
+			computeRGB();
+			optimiseColor(0.1, 0.2);
+			return this;
 		}
 	}
 
-	public static Color Cyan() {
-		Color cyan = new Color();
-		cyan.c = 1;
-		cyan.r = CYAN[0];
-		cyan.g = CYAN[1];
-		cyan.b = CYAN[2];
-		return cyan;
+	public Color setCyan() {
+		c = 1;
+		r = CYAN[0];
+		g = CYAN[1];
+		b = CYAN[2];
+		return this;
 	}
 
-	public static Color Magenta() {
-		Color magenta = new Color();
-		magenta.m = 1;
-		magenta.r = MAGENTA[0];
-		magenta.g = MAGENTA[1];
-		magenta.b = MAGENTA[2];
-		return magenta;
+	public Color setMagenta() {
+		m = 1;
+		r = MAGENTA[0];
+		g = MAGENTA[1];
+		b = MAGENTA[2];
+		return this;
 	}
 
-	public static Color Yellow() {
-		Color yellow = new Color();
-		yellow.y = 1;
-		yellow.r = YELLOW[0];
-		yellow.g = YELLOW[1];
-		yellow.b = YELLOW[2];
-		return yellow;
+	public Color setYellow() {
+		y = 1;
+		r = YELLOW[0];
+		g = YELLOW[1];
+		b = YELLOW[2];
+		return this;
 	}
 
-	public static Color Black() {
-		Color black = new Color();
-		black.k = 1;
-		return black;
+	public Color setBlack() {
+		k = 1;
+		return this;
 	}
 
 	public boolean equals(Color other) {

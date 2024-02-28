@@ -1,6 +1,8 @@
 import java.util.Arrays;
 import java.util.List;
 import java.util.LinkedList;
+import java.util.Collections;
+import java.util.Comparator;
 
 public class Board {
 	
@@ -51,10 +53,10 @@ public class Board {
 		};
 		
 		colors = new ArrayList<Color>(Arrays.asList(
-			Color.Cyan(),
-			Color.Magenta(),
-			Color.Yellow(),
-			Color.Black()
+			new Color().setCyan(),
+			new Color().setMagenta(),
+			new Color().setYellow(),
+			new Color().setBlack()
 		));
 
 		scores = saver.scores;
@@ -234,11 +236,11 @@ public class Board {
 			return;
 		}
 
-		line.points.sort((p1, p2) -> new Float(p1.y).compareTo(new Float(p2.y)));
+		//line.points.sort((p1, p2) -> new Float(p1.y).compareTo(new Float(p2.y)));
+		Collections.sort(line.points, new CompareYComponent());
 
 		if (line.multicolored) {
 			colors.add(line.mix_color);
-			ArrayList<Tile> kept_tiles = new ArrayList<Tile>();
 
 			for (int i = 0; i < line.mix_color.multiplyer; i++) {
 				PVector coord = getCoordsAtPoint(line.points.get(i));
@@ -326,6 +328,13 @@ public class Board {
       		//colors = new IntList(dark_themes[theme]);
 		} else {
 			//colors = new IntList(themes[theme]);
+		}
+	}
+
+	class CompareYComponent implements Comparator<PVector> {
+		//@Override
+		int compare(PVector p1, PVector p2) {
+			return new Float(p1.y).compareTo(new Float(p2.y));
 		}
 	}
 }

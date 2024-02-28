@@ -135,11 +135,11 @@ public class Line {
 		for (Color clr : colors) {
 			for (int j = 0; j < clr.weight(); j++) {
 				if (j < clr.c) {
-					fill(rgb(Color.Cyan()));
+					fill(rgb(new Color().setCyan()));
 				} else if(j-clr.c < clr.m) {
-					fill(rgb(Color.Magenta()));
+					fill(rgb(new Color().setMagenta()));
 				} else if(j-clr.c-clr.m < clr.y) {
-					fill(rgb(Color.Yellow()));
+					fill(rgb(new Color().setYellow()));
 				} else {
 					fill(0);
 				}
@@ -155,7 +155,7 @@ public class Line {
 	}
 
 	public void mixColors() {
-		mix_color = Color.fromMixColors(colors);
+		mix_color = new Color().fromMixColors(colors);
 		multicolored = !mix_color.equals(colors.get(0));
 	}
 

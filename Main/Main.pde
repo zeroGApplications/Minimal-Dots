@@ -5,7 +5,7 @@ Board board;
 Line line;
 DrawerGUI themegui;
 DrawerGUI resetgui;
-boolean debugmode = true;
+boolean debugmode = false;
 LinkedList<Effect> effect_queue;
 int effect_delay;
 
@@ -53,7 +53,6 @@ void setup() {
 	imageMode(CENTER);
 	
 	if (debugmode) {
-		surface.setResizable(true);
 		//frameRate(5);
 	}
 }
