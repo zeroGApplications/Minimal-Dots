@@ -1,6 +1,6 @@
 PVector GUI_SIZE_MULTIPLYERS = new PVector(0, 0);
 float GUI_SIZE_MULTIPLYER = 0.0;
-float SPECIAL_TILE_PROBABILITY = 0.51;
+float SPECIAL_TILE_PROBABILITY = 0.02;
 boolean DARKMODE = false;
 
 void initialize(float wdh, float hgt) {
