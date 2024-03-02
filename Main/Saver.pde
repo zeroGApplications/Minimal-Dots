@@ -1,3 +1,5 @@
+import java.io.File;
+
 public class Saver {
 	
 	String filename;
@@ -12,7 +14,7 @@ public class Saver {
 	EffectType[][] specials_map;
 
 	public Saver(boolean reset) {
-		filename = "save_file.txt";
+		filename = sketchPath("save_file.txt");
 		
 		theme = 0;
 		darkmode = 0;
@@ -20,8 +22,8 @@ public class Saver {
 		highscores = new int[4];
 		board_data = new int[10][10];
 		specials_map = new EffectType[10][10];
-		
-		File f = dataFile(filename);
+
+		File f = new File(filename);
 		if (f.isFile() && !reset) {
 			loadData();
 		} else {
@@ -76,11 +78,11 @@ public class Saver {
 			res[4 + y] = join(nf(board.field[y], 0), ' ');
 		}
 		for(int x = 0; x < 10; x++) {
-			String tmp = "";
+			String[] tmp = new String[10];
 			for(int y = 0; y < 10; y++) {
-				tmp += nf(board.tiles.get(x).get(y).effect.ordinal(), 0);
+				tmp[y] = nf(board.tiles.get(x).get(y).effect.ordinal(), 0);
 			}
-			res[14 + x] = tmp;
+			res[14 + x] = join(tmp, ' ');
 		}
 		saveStrings(filename, res);
 	}

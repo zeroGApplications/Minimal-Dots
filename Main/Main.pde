@@ -54,6 +54,7 @@ void setup() {
 	if (debugmode) {
 		//frameRate(5);
 	}
+	prepareExitHandler();
 }
 
 void draw() {
@@ -139,4 +140,13 @@ void stop() {
 void applyDarkmode() {
 	board.setTheme(board.theme);
 	themegui.colors = board.getThemePreview();
+}
+
+
+private void prepareExitHandler () {
+	Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
+		public void run () {
+			saver.saveData(board);
+		}
+	}));
 }
